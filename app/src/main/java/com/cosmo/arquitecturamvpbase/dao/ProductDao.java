@@ -109,4 +109,45 @@ public class ProductDao extends DbContentProvider implements IProductScheme, IPr
 
         return product;
     }
+
+    String where = COLUMN_PRODUCT_SYNC+" =? or "+COLUMN_PRODUCT_SYNC+" is null ";
+    String[] parameter = new String[]{"N"};
+
+    @Override
+    public ArrayList<Product> fetchNotSyncProducts() {
+        ArrayList<Product> productList = new ArrayList<>();
+        cursor = super.query(PRODUCT_TABLE, PRODUCT_COLUMNS, where, parameter, COLUMN_PRODUCT_NAME);
+        if(cursor != null){
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()){
+                Product product = cursorToEntity(cursor);
+                productList.add(product);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        return productList;
+    }
+
+
+    String whereUpdate = COLUMN_ID+" =? ";
+    String[] parameterUpdate = new String[]{"S"};
+
+    @Override
+    public Boolean updateProduct(Product product) {
+        setContentValueProduct(product);
+        try{
+            return super.update(PRODUCT_TABLE, getContentValue(),whereUpdate,parameterUpdate) >= 0;
+            /*
+            if(totalInserted == -1){
+                return false;
+            }
+            return true;
+            */
+        }catch (SQLiteConstraintException ex){
+            Log.e("DbErrorCreateProduct", ex.getMessage());
+            return false;
+        }
+    }
+
 }

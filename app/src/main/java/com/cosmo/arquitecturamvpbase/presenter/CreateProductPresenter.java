@@ -24,7 +24,9 @@ public class CreateProductPresenter extends BasePresenter<ICreateProductView> {
     /*public void createNewLocalProduct(Product product) {
         if (getValidateInternet().isConnected()){
             createThreadCreateLocalProduct(product);
+            //REPOSITORIO
         }else{
+            //BASEDATOSLOCAL
             getView().showAlertInternet(R.string.error, R.string.validate_internet);
         }
     }*/
@@ -38,9 +40,9 @@ public class CreateProductPresenter extends BasePresenter<ICreateProductView> {
         product.setQuantity(quantity);
         product.setSync("N");
         if (getValidateInternet().isConnected()){
-            createThreadCreateLocalProduct(product);
+            createThreadCreateOnlineProduct(product);
         }else{
-            getView().showAlertInternet(R.string.error, R.string.validate_internet);
+            createThreadCreateLocalProduct(product);
         }
     }
 
@@ -51,37 +53,18 @@ public class CreateProductPresenter extends BasePresenter<ICreateProductView> {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-
                 createNewProductLocal(product);
-
             }
         });
         thread.start();
     }
 
-
-    public void createNewLocalOnlineProduct(String name, String description, String price, String quantity) {
-        Product product = new Product();
-        product.setId(UUID.randomUUID().toString()); //WARNING
-        product.setName(name);
-        product.setDescription(description);
-        product.setPrice(price);
-        product.setQuantity(quantity);
-        if (getValidateInternet().isConnected()){
-            createThreadCreateProductOnline(product);
-        }else{
-            getView().showAlertInternet(R.string.error, R.string.validate_internet);
-        }
-    }
-
-    public void createThreadCreateProductOnline(final Product product) {
+    public void createThreadCreateOnlineProduct(final Product product) {
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-
                 createNewProductService(product);
-
             }
         });
         thread.start();

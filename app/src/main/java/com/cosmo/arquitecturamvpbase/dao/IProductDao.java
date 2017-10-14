@@ -12,5 +12,7 @@ public interface IProductDao {
 
     public ArrayList<Product> fetchAllProducts();
     public Boolean createProduct(Product product);
+    public ArrayList<Product> fetchNotSyncProducts();
+    public Boolean updateProduct(Product product);
 
 }

@@ -26,19 +26,31 @@ public class ProductPresenter extends BasePresenter<IProductView> {
 
     public void getListProduct() {
         if (getValidateInternet().isConnected()) {
-            createThreadProduct();
+
+            createThreadProductOnline();
         } else {
-            getView().showAlertDialogInternet(R.string.error, R.string.validate_internet);
+            createThreadProductLocal();
         }
     }
 
-    private void createThreadProduct() {
+    private void createThreadProductLocal() {
         // getView().showProgress(R.string.loading_message);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 //getProductList();
                 getProductListDB();
+            }
+        });
+        thread.start();
+    }
+
+    private void createThreadProductOnline() {
+        // getView().showProgress(R.string.loading_message);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getProductList();
             }
         });
         thread.start();

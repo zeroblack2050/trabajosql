@@ -1,7 +1,10 @@
 package com.cosmo.arquitecturamvpbase.synchronizer;
 
+import com.cosmo.arquitecturamvpbase.helper.Database;
+import com.cosmo.arquitecturamvpbase.model.Product;
 import com.cosmo.arquitecturamvpbase.presenter.CreateProductPresenter;
 import com.cosmo.arquitecturamvpbase.receivers.NetworkStateReceiver;
+import com.cosmo.arquitecturamvpbase.repository.ProductRepository;
 
 import java.util.ArrayList;
 
@@ -11,9 +14,7 @@ import java.util.ArrayList;
 
 public class Synchronizer {
 
-    private NetworkStateReceiver networkStateReceiver;
-
-    private CreateProductPresenter presenter;
+    ProductRepository productRepository= new ProductRepository();
 
     private static final String TAG = "Synchronizer";
     public static Synchronizer instance = null;
@@ -28,6 +29,16 @@ public class Synchronizer {
 
     public void executeSyncLocalToServer(boolean isConnected) {
 
+        if(isConnected){
+            ArrayList<Product> listProducts = Database.productDao.fetchNotSyncProducts();
+            for (Product p:listProducts) {
+                p.setSync("S");
+                productRepository.createProduct(p);
+                Database.productDao.updateProduct(p);
+
+            }
+
+        }
 
     }
 }
